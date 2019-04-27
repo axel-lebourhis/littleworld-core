@@ -2,13 +2,11 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-#include "../include/const.h"
+#include "const.hpp"
 
 int main(int argc, char *argv[])
 {
 	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "LittleWorld");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
 
     while (window.isOpen())
     {
@@ -20,7 +18,6 @@ int main(int argc, char *argv[])
         }
 
         window.clear();
-        window.draw(shape);
         window.display();
     }
 	return 0;
