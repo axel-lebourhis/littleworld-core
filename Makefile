@@ -1,12 +1,12 @@
 CXX      := -g++
-CXXFLAGS := -Wall -O2
+CXXFLAGS := -Wall -O2 -std=c++14
 LDFLAGS  := -lsfml-graphics -lsfml-window -lsfml-system
 BUILD    := ./build
 SRC_DIR  := ./src
 OBJ_DIR  := $(BUILD)/objects
 APP_DIR  := $(BUILD)/bin
 TARGET   := littleworld
-INCLUDE  := 
+INCLUDE  := -Iinclude/
 SRC      :=                      \
 	$(wildcard  $(SRC_DIR)/*.cpp)         \
 
@@ -21,6 +21,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 $(APP_DIR)/$(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(OBJECTS) -o $(APP_DIR)/$(TARGET) $(LDFLAGS)
+	@ln -sf $(APP_DIR)/$(TARGET) ./$(TARGET)
 
 .PHONY: all build clean debug release
 
@@ -39,3 +40,4 @@ release: all
 clean:
 	-@rm -rvf $(OBJ_DIR)/*
 	-@rm -rvf $(APP_DIR)/*
+	-@rm -vf ./$(TARGET)
