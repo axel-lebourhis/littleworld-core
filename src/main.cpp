@@ -3,10 +3,11 @@
 #include <SFML/Graphics.hpp>
 
 #include "const.hpp"
+#include "view.hpp"
 
 int main(int argc, char *argv[])
 {
-	sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "LittleWorld");
+	View window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "LittleWorld");
 
     while (window.isOpen())
     {

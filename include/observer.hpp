@@ -1,6 +1,7 @@
 #ifndef OBSERVER_HPP
 #define OBSERVER_HPP
 
+#include <iostream>
 #include <list>
 
 
@@ -13,7 +14,7 @@ public:
 template<typename T>
 class Observable {
 private:
-	list<Observer<T> *> list_observers_;
+	std::list<Observer<T> *> list_observers_;
 public:
 	void notifyObservers(T info) {
 		for(auto obs : list_observers_) obs->update(info);
