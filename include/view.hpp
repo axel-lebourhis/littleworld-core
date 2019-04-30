@@ -11,6 +11,8 @@ class View : public sf::RenderWindow , public Observer<int>
 
 public:
 	View(sf::VideoMode mode, const sf::String &title);
+
+	void update(int info) override;
 };
 
 #endif

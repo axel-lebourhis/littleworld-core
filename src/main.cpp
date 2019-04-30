@@ -5,15 +5,16 @@
 #include "const.hpp"
 #include "view.hpp"
 #include "input.hpp"
+#include "controller.hpp"
 
 int main(int argc, char *argv[])
 {
 	View window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "LittleWorld");
-	Input input;
+	Controller controller(&window);
 
     while (window.isOpen())
     {
-    	input.handleInputs(window);
+    	controller.handleInputs();
         window.clear();
         window.display();
     }

@@ -45,16 +45,16 @@ void Input::setButton(buttonType button, bool state) {
 	}
 }
 
-void Input::handleInputs(View &window) {
-	while (window.pollEvent(event_)) {
+void Input::handleInputs(View* window) {
+	while (window->pollEvent(event_)) {
 	    switch (event_.type) {
 	    	case sf::Event::Closed :
-	    		window.close();
+	    		window->close();
 	    		break;
 	    	case sf::Event::KeyPressed :
 	    		switch(event_.key.code) {
 	    			case sf::Keyboard::Escape :
-	    				window.close();
+	    				window->close();
 	    				break;
 	    			case sf::Keyboard::LShift :
 	    				button_.run = true;
@@ -82,9 +82,6 @@ void Input::handleInputs(View &window) {
 	    		}
 	    	case sf::Event::KeyReleased :
 	    		switch(event_.key.code) {
-	    			case sf::Keyboard::Escape :
-	    				window.close();
-	    				break;
 	    			case sf::Keyboard::LShift :
 	    				button_.run = false;
 	    				break;

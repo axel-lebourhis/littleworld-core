@@ -34,7 +34,7 @@ public:
 
 	void setButton(buttonType button, bool state);
 
-	void handleInputs(View &window);
+	void handleInputs(View* window);
 };
 
 #endif

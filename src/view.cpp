@@ -9,3 +9,7 @@ sf::RenderWindow(mode, title)
 {
 	std::cout << "View constructor" << std::endl;
 }
+
+void View::update(int info) {
+	
+}
