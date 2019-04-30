@@ -1,11 +1,11 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include <SMFL/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include "observer.hpp"
 #include "view.hpp"
 
-struct Button 
+struct Button
 {
 	bool left;
 	bool right;
@@ -17,15 +17,15 @@ struct Button
 	bool enter;
 };
 
-typedef enum buttonType {
-	up, down, right, left, attack, spell, run, enter;
+typedef enum {
+	up, down, right, left, attack, spell, run, enter
 } buttonType;
 
-class Input 
+class Input
 {
 private:
 	sf::Event event_;
-	Button button;
+	Button button_;
 
 public:
 	Input();

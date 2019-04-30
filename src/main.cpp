@@ -4,20 +4,16 @@
 
 #include "const.hpp"
 #include "view.hpp"
+#include "input.hpp"
 
 int main(int argc, char *argv[])
 {
 	View window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "LittleWorld");
+	Input input;
 
     while (window.isOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
+    	input.handleInputs(window);
         window.clear();
         window.display();
     }
