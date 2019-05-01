@@ -47,110 +47,62 @@ sf::RenderWindow(mode, title)
 	else {
 		HUDLife.setTexture(HUDLifeTexture);
 	}
+
+	tilesetDisplayed_ = 1;
+	tileSetTimer_ = TIME_BETWEEN_FRAME * 3;
+	testScroll_ = 0;
 }
 
-void View::update(int info) {
-	
-}
-
-void View::loadMap() {
-	std::fstream file_stream;
-
-	mapMaxX_ = 0; 
-	mapMaxY_ = 0;
-
-	std::vector<std::vector<int>> lines;
-	std::vector<int> line_v;
-
-	std::string strBuf;
-	std::stringstream strStream;
-
-	file_stream.open("map/map1.txt", std::fstream::in);
-
-	if(!file_stream.is_open()) {
-		std::cerr << "Error opening map file." << std::endl;
-	}
-
-	while(!file_stream.eof()) {
-		getline(file_stream, strBuf);
-		if(!strBuf.size())
-			continue;
-
-		strStream.clear();
-		strStream.str(strBuf);
-		line_v.clear();
-		strBuf.clear();
-		while(true) {
-			getline(strStream, strBuf, ' ');
-			line_v.push_back(atoi(strBuf.c_str()));
-			if(!strStream.good())
-				break;
-		}
-		if(line_v.size())
-			lines.push_back(line_v);
-	}
-	file_stream.close();
-
-	charBeginX_ = lines[0][0];
-	charBeginY_ = lines[0][1];
-	tilesetDisplayed_ = lines[0][2];
-
-	for(int x = 3; x < MAX_TILES_XY + 3; x++) {
-		layer1_[0][x-3] = lines[0][x];
-	}
-
-	for(int y = 1; y < MAX_TILES_XY; y++) {
-		for(int x = 0; x < MAX_TILES_XY; x++) {
-			layer1_[y][x] = lines[y][x];
-			if(layer1_[y][x] > 0) {
-				if(x > mapMaxX_)
-					mapMaxX_ = x;
-				if(y > mapMaxY_)
-					mapMaxY_ = y;
-			}
-		}
-	}
-
-	for(int y = 0; y < MAX_TILES_XY; y++) {
-		for(int x = 0; x < MAX_TILES_XY; x++) {
-			layer2_[y][x] = lines[y+MAX_TILES_XY][x];
-		}
-	}
-
-	for(int y = 0; y < MAX_TILES_XY; y++) {
-		for(int x = 0; x < MAX_TILES_XY; x++) {
-			layer3_[y][x] = lines[y+MAX_TILES_XY*2][x];
-		}
-	}
-
-	for(int y = 0; y < MAX_TILES_XY; y++) {
-		for(int x = 0; x < MAX_TILES_XY; x++) {
-			layer4_[y][x] = lines[y+MAX_TILES_XY*3][x];
-		}
-	}
+void View::update(stateInfo updated_info) {
+	//testScroll();
+	info = updated_info;
+    clear();
+    drawMap(2);
+    drawMap(1);
+    drawMap(3);
 }
 
 void View::drawMap(int layer) {
-	int tile_screen_x = charBeginX_ / TILE_SIZE;
-	int start_blit_x = (charBeginX_ % TILE_SIZE)*-1;
+	int tile_screen_x = info.map_start_p_x / TILE_SIZE;
+	int start_blit_x = (info.map_start_p_x % TILE_SIZE)*-1;
 	int end_blit_x = start_blit_x + WINDOW_WIDTH + (start_blit_x == 0 ? 0 : TILE_SIZE);
 
-	int tile_screen_y = charBeginY_ / TILE_SIZE;
-	int start_blit_y = (charBeginY_ % TILE_SIZE)*-1;
+	int tile_screen_y = info.map_start_p_y / TILE_SIZE;
+	int start_blit_y = (info.map_start_p_y % TILE_SIZE)*-1;
 	int end_blit_y = start_blit_y + WINDOW_HEIGHT + (start_blit_y == 0 ? 0 : TILE_SIZE);
 	int tile;
 	int tile_tileset_x, tile_tileset_y;
 
+	if(tileSetTimer_ <= 0) {
+		if(tilesetDisplayed_) {
+			tilesetDisplayed_ = 0;
+		}
+		else {
+			tilesetDisplayed_ = 1;
+		}
+		tileSetTimer_ = TIME_BETWEEN_FRAME * 3;
+	}
+	else {
+		tileSetTimer_--;
+	}
+
 	if(layer == 1) {
 		for(int y = start_blit_y; y < end_blit_y; y += TILE_SIZE) {
-			tile_screen_x = charBeginX_ / TILE_SIZE;
+			tile_screen_x = info.map_start_p_x / TILE_SIZE;
 			for(int x = start_blit_x; x < end_blit_x; x += TILE_SIZE) {
-				tile = layer1_[tile_screen_y][tile_screen_x];
+				tile = info.layer1[tile_screen_y][tile_screen_x];
 				tile_tileset_y = tile / TILES_PER_LINE * TILE_SIZE;
 				tile_tileset_x = tile % TILES_PER_LINE * TILE_SIZE;
-				tileSet1.setPosition(sf::Vector2f(x,y));
-				tileSet1.setTextureRect(sf::IntRect(tile_tileset_x, tile_tileset_y, TILE_SIZE, TILE_SIZE));
-				draw(tileSet1);
+				if(tilesetDisplayed_) {
+					tileSet1.setPosition(sf::Vector2f(x,y));
+					tileSet1.setTextureRect(sf::IntRect(tile_tileset_x, tile_tileset_y, TILE_SIZE, TILE_SIZE));
+					draw(tileSet1);
+				}
+				else {
+					tileSet1b.setPosition(sf::Vector2f(x,y));
+					tileSet1b.setTextureRect(sf::IntRect(tile_tileset_x, tile_tileset_y, TILE_SIZE, TILE_SIZE));
+					draw(tileSet1b);
+				}
 				tile_screen_x++;
 			}
 			tile_screen_y++;
@@ -158,14 +110,21 @@ void View::drawMap(int layer) {
 	}
 	else if(layer == 2) {
 		for(int y = start_blit_y; y < end_blit_y; y += TILE_SIZE) {
-			tile_screen_x = charBeginX_ / TILE_SIZE;
+			tile_screen_x = info.map_start_p_x / TILE_SIZE;
 			for(int x = start_blit_x; x < end_blit_x; x += TILE_SIZE) {
-				tile = layer2_[tile_screen_y][tile_screen_x];
+				tile = info.layer2[tile_screen_y][tile_screen_x];
 				tile_tileset_y = tile / TILES_PER_LINE * TILE_SIZE;
 				tile_tileset_x = tile % TILES_PER_LINE * TILE_SIZE;
-				tileSet1.setPosition(sf::Vector2f(x,y));
-				tileSet1.setTextureRect(sf::IntRect(tile_tileset_x, tile_tileset_y, TILE_SIZE, TILE_SIZE));
-				draw(tileSet1);
+				if(tilesetDisplayed_) {
+					tileSet1.setPosition(sf::Vector2f(x,y));
+					tileSet1.setTextureRect(sf::IntRect(tile_tileset_x, tile_tileset_y, TILE_SIZE, TILE_SIZE));
+					draw(tileSet1);
+				}
+				else {
+					tileSet1b.setPosition(sf::Vector2f(x,y));
+					tileSet1b.setTextureRect(sf::IntRect(tile_tileset_x, tile_tileset_y, TILE_SIZE, TILE_SIZE));
+					draw(tileSet1b);
+				}
 				tile_screen_x++;
 			}
 			tile_screen_y++;
@@ -173,14 +132,21 @@ void View::drawMap(int layer) {
 	}
 	else if(layer == 3) {
 		for(int y = start_blit_y; y < end_blit_y; y += TILE_SIZE) {
-			tile_screen_x = charBeginX_ / TILE_SIZE;
+			tile_screen_x = info.map_start_p_x / TILE_SIZE;
 			for(int x = start_blit_x; x < end_blit_x; x += TILE_SIZE) {
-				tile = layer3_[tile_screen_y][tile_screen_x];
+				tile = info.layer3[tile_screen_y][tile_screen_x];
 				tile_tileset_y = tile / TILES_PER_LINE * TILE_SIZE;
 				tile_tileset_x = tile % TILES_PER_LINE * TILE_SIZE;
-				tileSet1.setPosition(sf::Vector2f(x,y));
-				tileSet1.setTextureRect(sf::IntRect(tile_tileset_x, tile_tileset_y, TILE_SIZE, TILE_SIZE));
-				draw(tileSet1);
+				if(tilesetDisplayed_) {
+					tileSet1.setPosition(sf::Vector2f(x,y));
+					tileSet1.setTextureRect(sf::IntRect(tile_tileset_x, tile_tileset_y, TILE_SIZE, TILE_SIZE));
+					draw(tileSet1);
+				}
+				else {
+					tileSet1b.setPosition(sf::Vector2f(x,y));
+					tileSet1b.setTextureRect(sf::IntRect(tile_tileset_x, tile_tileset_y, TILE_SIZE, TILE_SIZE));
+					draw(tileSet1b);
+				}
 				tile_screen_x++;
 			}
 			tile_screen_y++;

@@ -6,19 +6,24 @@
 #include "view.hpp"
 #include "input.hpp"
 #include "controller.hpp"
+#include "model.hpp"
 
 int main(int argc, char *argv[])
 {
 	View window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "LittleWorld");
 	Controller controller(&window);
-	window.loadMap();
+	Model model;
+
+	model.addObserver(&window);
+	model.loadMap();
+	window.setVerticalSyncEnabled(true);
+	//window.loadMap();
     while (window.isOpen())
     {
     	controller.handleInputs();
-    	window.clear();
-        window.drawMap(2);
-        window.drawMap(1);
-        window.drawMap(3);
+    	model.testScroll();
+    	model.updateView();
+    	//window.update(0);
         window.display();
     }
 	return 0;

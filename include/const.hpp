@@ -6,5 +6,6 @@ const int WINDOW_HEIGHT = 600;
 const int TILE_SIZE = 32;
 const int TILES_PER_LINE = 10;
 const int MAX_TILES_XY = 80;
+const int TIME_BETWEEN_FRAME = 20;
 
 #endif

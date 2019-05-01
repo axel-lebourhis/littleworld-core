@@ -5,7 +5,63 @@
 #include "const.hpp"
 #include "observer.hpp"
 
-class View : public sf::RenderWindow , public Observer<int>
+struct stateInfo {
+	int player_start_x;
+	int player_start_y;
+	int map_start_p_x;
+	int map_start_p_y;
+	int map_max_p_x;
+	int map_max_p_y;
+	int tile_number_x;
+	int tile_number_y;
+	int layer1[MAX_TILES_XY][MAX_TILES_XY];
+	int layer2[MAX_TILES_XY][MAX_TILES_XY];
+	int layer3[MAX_TILES_XY][MAX_TILES_XY];
+	int layer4[MAX_TILES_XY][MAX_TILES_XY];
+	int tilesetDisplayed;
+
+	stateInfo() {
+		player_start_x = 0;
+		player_start_y = 0;
+		map_start_p_x = 0;
+		map_start_p_y = 0;
+		map_max_p_x = 0;
+		map_max_p_y = 0;
+		tile_number_x = 0;
+		tile_number_y = 0;
+		tilesetDisplayed = 0;
+		for(int i = 0; i < MAX_TILES_XY; i++) {
+			for(int j = 0; j < MAX_TILES_XY; j++) {
+				layer1[i][j] = 0;
+				layer2[i][j] = 0;
+				layer3[i][j] = 0;
+				layer4[i][j] = 0;
+			}
+		}
+	}
+
+	stateInfo(const stateInfo& copy_info) {
+		player_start_x = copy_info.player_start_x;
+		player_start_y = copy_info.player_start_x;
+		map_start_p_x = copy_info.map_start_p_x;
+		map_start_p_y = copy_info.map_start_p_y;
+		map_max_p_x = copy_info.map_max_p_x;
+		map_max_p_y = copy_info.map_max_p_y;
+		tile_number_x = copy_info.tile_number_x;
+		tile_number_y = copy_info.tile_number_y;
+		tilesetDisplayed = copy_info.tilesetDisplayed;
+		for(int i = 0; i < MAX_TILES_XY; i++) {
+			for(int j = 0; j < MAX_TILES_XY; j++) {
+				layer1[i][j] = copy_info.layer1[i][j];
+				layer2[i][j] = copy_info.layer2[i][j];
+				layer3[i][j] = copy_info.layer3[i][j];
+				layer4[i][j] = copy_info.layer4[i][j];
+			}
+		}
+	}
+};
+
+class View : public sf::RenderWindow , public Observer<stateInfo>
 {
 private:
 	// textures
@@ -20,23 +76,19 @@ private:
 	sf::Sprite HUD;
 	sf::Sprite HUDMana;
 	sf::Sprite HUDLife;
-	// misc
-	int charBeginX_, charBeginY_;
-	int mapStartX_, mapStartY_;
-	int mapMaxX_, mapMaxY_;
-	int tilesetDisplayed_;
+	// state_info
+	stateInfo info;
 
-	int layer1_[80][80];
-	int layer2_[80][80];
-	int layer3_[80][80];
-	int layer4_[80][80];
+	// misc
+	int tilesetDisplayed_;
+	int tileSetTimer_;
+	int testScroll_;
 
 public:
 	View(sf::VideoMode mode, const sf::String &title);
 
-	void update(int info) override;
+	void update(stateInfo updated_info) override;
 
-	void loadMap();
 	void drawMap(int layer);
 };
 
