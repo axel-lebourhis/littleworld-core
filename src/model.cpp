@@ -99,6 +99,30 @@ void Model::loadMap() {
 	info.map_max_p_y = (info.map_max_p_y + 1) * TILE_SIZE;
 }
 
+void Model::moveDown(int offset) {
+	if(info.map_start_p_y < info.map_max_p_y - WINDOW_HEIGHT) {
+		info.map_start_p_y += offset;
+	}
+}
+
+void Model::moveUp(int offset) {
+	if(info.map_start_p_y > 0) {
+		info.map_start_p_y -= offset;
+	}
+}
+
+void Model::moveLeft(int offset) {
+	if(info.map_start_p_x > 0) {
+		info.map_start_p_x -= offset;
+	}
+}
+
+void Model::moveRight(int offset) {
+	if(info.map_start_p_x < info.map_max_p_x - WINDOW_WIDTH) {
+		info.map_start_p_x += offset;
+	}
+}
+
 void Model::testScroll() {
 	if(testScroll_ == 0) {
 		if(info.map_start_p_x <= info.map_max_p_x - WINDOW_WIDTH) {

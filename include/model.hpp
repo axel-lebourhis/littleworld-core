@@ -16,6 +16,10 @@ public:
 	void loadMap();
 	void testScroll();
 	void updateView();
+	void moveDown(int);
+	void moveUp(int);
+	void moveLeft(int);
+	void moveRight(int);
 };
 
 

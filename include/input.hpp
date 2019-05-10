@@ -4,37 +4,18 @@
 #include <SFML/Graphics.hpp>
 #include "observer.hpp"
 #include "view.hpp"
-
-struct Button
-{
-	bool left;
-	bool right;
-	bool up;
-	bool down;
-	bool attack;
-	bool spell;
-	bool run;
-	bool enter;
-};
-
-typedef enum {
-	up, down, right, left, attack, spell, run, enter
-} buttonType;
+#include "model.hpp"
 
 class Input
 {
 private:
 	sf::Event event_;
-	Button button_;
+	int moveOffset_;
 
 public:
 	Input();
 
-	Button getButton(void) const;
-
-	void setButton(buttonType button, bool state);
-
-	void handleInputs(View* window);
+	void handleInputs(View* window, Model* model);
 };
 
 #endif
