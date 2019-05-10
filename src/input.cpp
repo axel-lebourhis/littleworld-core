@@ -20,13 +20,13 @@ void Input::handleInputs(View* window, Model* model) {
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 		model->moveDown(moveOffset_);
 	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+	else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
 		model->moveUp(moveOffset_);
 	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+	else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
 		model->moveLeft(moveOffset_);
 	}
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+	else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		model->moveRight(moveOffset_);
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
