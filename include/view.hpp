@@ -4,10 +4,10 @@
 #include <SFML/Graphics.hpp>
 #include "const.hpp"
 #include "observer.hpp"
+#include "player.hpp"
 
 struct stateInfo {
-	int player_start_x;
-	int player_start_y;
+	Player player;
 	int map_start_p_x;
 	int map_start_p_y;
 	int map_max_p_x;
@@ -20,9 +20,9 @@ struct stateInfo {
 	int layer4[MAX_TILES_XY][MAX_TILES_XY];
 	int tilesetDisplayed;
 
-	stateInfo() {
-		player_start_x = 0;
-		player_start_y = 0;
+	stateInfo() :
+	player() 
+	{
 		map_start_p_x = 0;
 		map_start_p_y = 0;
 		map_max_p_x = 0;
@@ -40,9 +40,9 @@ struct stateInfo {
 		}
 	}
 
-	stateInfo(const stateInfo& copy_info) {
-		player_start_x = copy_info.player_start_x;
-		player_start_y = copy_info.player_start_x;
+	stateInfo(const stateInfo& copy_info)
+	{
+		player = copy_info.player;
 		map_start_p_x = copy_info.map_start_p_x;
 		map_start_p_y = copy_info.map_start_p_y;
 		map_max_p_x = copy_info.map_max_p_x;
@@ -67,12 +67,14 @@ private:
 	// textures
 	sf::Texture tileSet1Texture;
 	sf::Texture tileSet1bTexture;
+	sf::Texture heroTexture;
 	sf::Texture HUDTexture;
 	sf::Texture HUDManaTexture;
 	sf::Texture HUDLifeTexture;
 	// sprites
 	sf::Sprite tileSet1;
 	sf::Sprite tileSet1b;
+	sf::Sprite hero;
 	sf::Sprite HUD;
 	sf::Sprite HUDMana;
 	sf::Sprite HUDLife;
@@ -82,6 +84,8 @@ private:
 	// misc
 	int tilesetDisplayed_;
 	int tileSetTimer_;
+	int heroTileTimer_;
+	int heroTileDisplayed_;
 	int testScroll_;
 
 public:
@@ -90,6 +94,9 @@ public:
 	void update(stateInfo updated_info) override;
 
 	void drawMap(int layer);
+	void drawPlayer();
+
+	void resetHeroTileDisplayed();
 };
 
 #endif

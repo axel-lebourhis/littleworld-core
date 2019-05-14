@@ -48,18 +48,83 @@ sf::RenderWindow(mode, title)
 		HUDLife.setTexture(HUDLifeTexture);
 	}
 
+	if(!heroTexture.loadFromFile("graphics/hero.png")){
+		std::cout << "Error loading Hero texture." << std::endl;
+	}
+	else {
+		hero.setTexture(heroTexture);
+	}
+
 	tilesetDisplayed_ = 1;
 	tileSetTimer_ = TIME_BETWEEN_FRAME * 3;
 	testScroll_ = 0;
+	heroTileTimer_ = TIME_BETWEEN_HERO_FRAME;
+	heroTileDisplayed_ = 0;
 }
 
 void View::update(stateInfo updated_info) {
-	//testScroll();
 	info = updated_info;
     clear();
     drawMap(2);
     drawMap(1);
+    drawPlayer();
     drawMap(3);
+}
+
+void View::resetHeroTileDisplayed() {
+	heroTileDisplayed_ = 0;
+	heroTileTimer_ = 0;
+}
+
+void View::drawPlayer() {
+	hero.setPosition(sf::Vector2f(info.player.getScreenPosX(),info.player.getScreenPosY()));
+	switch(info.player.getDirection()) {
+		case HERO_ORIENTED_LEFT :
+			if(info.player.isMoving()) {
+				hero.setTextureRect(sf::IntRect(heroTileDisplayed_*HERO_TILE_SIZE_X, (HERO_ORIENTED_LEFT+3)*HERO_TILE_SIZE_Y, HERO_TILE_SIZE_X, HERO_TILE_SIZE_Y));
+			}
+			else {
+				hero.setTextureRect(sf::IntRect(heroTileDisplayed_*HERO_TILE_SIZE_X, HERO_ORIENTED_LEFT*HERO_TILE_SIZE_Y, HERO_TILE_SIZE_X, HERO_TILE_SIZE_Y));
+			}
+			break;
+		case HERO_ORIENTED_RIGHT :
+			if(info.player.isMoving()) {
+				hero.setTextureRect(sf::IntRect((heroTileDisplayed_+1)*HERO_TILE_SIZE_X, (HERO_ORIENTED_LEFT+3)*HERO_TILE_SIZE_Y, (-1)*HERO_TILE_SIZE_X, HERO_TILE_SIZE_Y));
+			}
+			else {
+				hero.setTextureRect(sf::IntRect((heroTileDisplayed_+1)*HERO_TILE_SIZE_X, HERO_ORIENTED_LEFT*HERO_TILE_SIZE_Y, (-1)*HERO_TILE_SIZE_X, HERO_TILE_SIZE_Y));
+			}
+			break;
+		case HERO_ORIENTED_UP :
+			if(info.player.isMoving()) {
+				hero.setTextureRect(sf::IntRect(heroTileDisplayed_*HERO_TILE_SIZE_X, (HERO_ORIENTED_UP+3)*HERO_TILE_SIZE_Y, HERO_TILE_SIZE_X, HERO_TILE_SIZE_Y));
+			}
+			else {
+				hero.setTextureRect(sf::IntRect(heroTileDisplayed_*HERO_TILE_SIZE_X, HERO_ORIENTED_UP*HERO_TILE_SIZE_Y, HERO_TILE_SIZE_X, HERO_TILE_SIZE_Y));
+			}
+			break;
+		case HERO_ORIENTED_DOWN :
+			if(info.player.isMoving()) {
+				hero.setTextureRect(sf::IntRect(heroTileDisplayed_*HERO_TILE_SIZE_X, (HERO_ORIENTED_DOWN+3)*HERO_TILE_SIZE_Y, HERO_TILE_SIZE_X, HERO_TILE_SIZE_Y));
+			}
+			else {
+				hero.setTextureRect(sf::IntRect(heroTileDisplayed_*HERO_TILE_SIZE_X, HERO_ORIENTED_DOWN*HERO_TILE_SIZE_Y, HERO_TILE_SIZE_X, HERO_TILE_SIZE_Y));
+			}
+			break;
+		default :
+			break;		
+	}
+	if(heroTileTimer_ <= 0) {
+		heroTileDisplayed_++;
+		if(heroTileDisplayed_ == 7) {
+			heroTileDisplayed_ = 0;
+		}
+		heroTileTimer_ = TIME_BETWEEN_HERO_FRAME;
+	}
+	else {
+		heroTileTimer_--;
+	}
+	draw(hero);
 }
 
 void View::drawMap(int layer) {
