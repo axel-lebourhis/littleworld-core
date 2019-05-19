@@ -2,6 +2,7 @@
 #define MODEL_HPP
 
 #include <SFML/Graphics.hpp>
+#include <string>
 #include "observer.hpp"
 #include "view.hpp"
 #include "player.hpp"
@@ -10,14 +11,22 @@ class Model : public Observable<stateInfo> {
 private:
 	stateInfo info;
 	int testScroll_;
+	int mapUp;
+	int mapDown;
+	int mapLeft;
+	int mapRight;
+	int level;
 
 public:
 	Model();
 
 	void setPlayerMoving(bool);
-	bool getPlayerMoving() const;;
+	void setLevel(int);
 
-	void loadMap();
+	bool getPlayerMoving() const;;
+	int getLevel() const;
+
+	void loadMap(std::string);
 	void testScroll();
 	void updateView();
 	void moveDown(int);
@@ -29,6 +38,7 @@ public:
 	void moveCameraLeft(int);
 	void moveCameraRight(int);
 	void setCameraOnPlayer();
+	void changeLevel();
 	bool isCollision(int);
 };
 

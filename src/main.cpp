@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 	Controller controller(&window, &model);
 
 	model.addObserver(&window);
-	model.loadMap();
+	//model.loadMap();
 	window.setVerticalSyncEnabled(true);
     while (window.isOpen())
     {

@@ -9,22 +9,57 @@
 Model::Model() :
 info()
 {
-
+	level = 1;
+	loadMap("map/map"+std::to_string(level)+".txt");
 }
 
 void Model::setPlayerMoving(bool state) {
 	info.player.setMoving(state);
 }
 
+void Model::setLevel(int l) {
+	level = l;
+	loadMap("map/map"+std::to_string(level)+".txt");
+}
+
 bool Model::getPlayerMoving() const {
 	return info.player.isMoving();
+}
+
+int Model::getLevel() const {
+	return level;
 }
 
 void Model::updateView() {
 	notifyObservers(info);
 }
 
-void Model::loadMap() {
+void Model::changeLevel() {
+	switch(info.player.getDirection()) {
+		case HERO_ORIENTED_UP :
+			if(mapUp != 0) {
+				setLevel(mapUp);
+			}
+			break;
+		case HERO_ORIENTED_DOWN :
+			if(mapDown != 0) {
+				setLevel(mapDown);
+			}
+			break;
+		case HERO_ORIENTED_LEFT :
+			if(mapLeft != 0) {
+				setLevel(mapLeft);
+			}
+			break;
+		case HERO_ORIENTED_RIGHT :
+			if(mapRight != 0) {
+				setLevel(mapRight);
+			}
+			break;
+	}
+}
+
+void Model::loadMap(std::string filename) {
 	std::fstream file_stream;
 
 	info.map_max_p_x = 0; 
@@ -36,10 +71,11 @@ void Model::loadMap() {
 	std::string strBuf;
 	std::stringstream strStream;
 
-	file_stream.open("map/map1.txt", std::fstream::in);
+	file_stream.open(filename, std::fstream::in);
 
 	if(!file_stream.is_open()) {
 		std::cerr << "Error opening map file." << std::endl;
+		exit(EXIT_FAILURE);
 	}
 
 	while(!file_stream.eof()) {
@@ -136,6 +172,13 @@ void Model::loadMap() {
 			info.layer4[y][x] = lines[y+MAX_TILES_XY*3][x];
 		}
 	}
+
+	int y = MAX_TILES_XY * 4;
+
+	mapUp = lines[y][0];
+	mapDown = lines[y][1];
+	mapLeft = lines[y][2];
+	mapRight = lines[y][3];
 }
 
 void Model::moveCameraDown(int offset) {
@@ -163,8 +206,39 @@ void Model::moveCameraRight(int offset) {
 }
 
 void Model::setCameraOnPlayer() {
-	info.map_start_p_x = info.player.getMapPosX();
-	info.map_start_p_y = info.player.getMapPosY();
+	int current_map_pos_x = info.player.getMapPosX();
+	int current_map_pos_y = info.player.getMapPosY();
+
+	int left_x = current_map_pos_x - WINDOW_WIDTH/2;
+	int right_x = current_map_pos_x + WINDOW_WIDTH/2;
+	int bottom_y = current_map_pos_y + WINDOW_HEIGHT/2;
+	int up_y = current_map_pos_y - WINDOW_HEIGHT/2;
+	
+	if(left_x > 0 && right_x < info.map_max_p_x) {
+		info.map_start_p_x = left_x;
+		info.player.setScreenPosX(WINDOW_WIDTH/2);
+	}
+	else if(left_x < 0) {
+		info.map_start_p_x = 0;
+		info.player.setScreenPosX(0);
+	}
+	else if(right_x > info.map_max_p_x) {
+		info.map_start_p_x = info.map_max_p_x - WINDOW_WIDTH;
+		info.player.setScreenPosX(WINDOW_WIDTH - HERO_TILE_SIZE_X);
+	}
+
+	if(up_y > 0 && bottom_y < info.map_max_p_y) {
+		info.map_start_p_y = up_y;
+		info.player.setScreenPosY(WINDOW_HEIGHT/2);
+	}
+	else if(up_y < 0) {
+		info.map_start_p_y = 0;
+		info.player.setScreenPosY(0);
+	}
+	else if(bottom_y > info.map_max_p_y) {
+		info.map_start_p_y = info.map_max_p_y - WINDOW_HEIGHT;
+		info.player.setScreenPosY(WINDOW_HEIGHT - HERO_TILE_SIZE_Y);
+	}
 }
 
 bool Model::isCollision(int direction) {
@@ -222,6 +296,14 @@ void Model::moveDown(int offset) {
 			info.player.setMapPosY(info.player.getMapPosY() + offset);
 		}
 	}
+	else if(mapDown != 0 && info.player.getMapPosY() >= info.map_max_p_y - HERO_TILE_SIZE_Y) {
+		info.player.setDirection(HERO_ORIENTED_DOWN);
+		int map_pos_x = info.player.getMapPosX();
+		changeLevel();
+		info.player.setMapPosX(map_pos_x);
+		info.player.setMapPosY(0);
+		setCameraOnPlayer();
+	}
 	else {
 		info.player.setMoving(false);
 	}
@@ -238,6 +320,14 @@ void Model::moveUp(int offset) {
 			info.player.setScreenPosY(info.player.getScreenPosY() - offset);
 			info.player.setMapPosY(info.player.getMapPosY() - offset);
 		}
+	}
+	else if(mapUp != 0 && info.player.getMapPosY() <= 0) {
+		info.player.setDirection(HERO_ORIENTED_UP);
+		int map_pos_x = info.player.getMapPosX();
+		changeLevel();
+		info.player.setMapPosX(map_pos_x);
+		info.player.setMapPosY(info.map_max_p_y - HERO_TILE_SIZE_Y);
+		setCameraOnPlayer();
 	}
 	else {
 		info.player.setMoving(false);
@@ -256,6 +346,14 @@ void Model::moveLeft(int offset) {
 			info.player.setMapPosX(info.player.getMapPosX() - offset);
 		}
 	}
+	else if(mapLeft != 0 && info.player.getMapPosX() <= 0) {
+		info.player.setDirection(HERO_ORIENTED_LEFT);
+		int map_pos_y = info.player.getMapPosY();
+		changeLevel();
+		info.player.setMapPosX(info.map_max_p_x - HERO_TILE_SIZE_X);
+		info.player.setMapPosY(map_pos_y);
+		setCameraOnPlayer();
+	}
 	else {
 		info.player.setMoving(false);
 	}
@@ -272,6 +370,14 @@ void Model::moveRight(int offset) {
 			info.player.setScreenPosX(info.player.getScreenPosX() + offset);
 			info.player.setMapPosX(info.player.getMapPosX() + offset);
 		}
+	}
+	else if(mapRight != 0 && info.player.getMapPosX() >= info.map_max_p_x - HERO_TILE_SIZE_X) {
+		info.player.setDirection(HERO_ORIENTED_RIGHT);
+		int map_pos_y = info.player.getMapPosY();
+		changeLevel();
+		info.player.setMapPosX(0);
+		info.player.setMapPosY(map_pos_y);
+		setCameraOnPlayer();
 	}
 	else {
 		info.player.setMoving(false);
