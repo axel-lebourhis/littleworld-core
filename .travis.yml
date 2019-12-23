@@ -6,5 +6,9 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install -y libsfml-dev
 script:
+  - make debug
+  - make release
   - make clean
+  - export BUILD_TEST=true
   - make all
+  - ./littleworld
