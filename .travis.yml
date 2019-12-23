@@ -12,8 +12,9 @@ before_install:
 script:
   - echo ${DISPLAY}
   - make debug
+  - make clean
   - make release
   - make clean
   - export BUILD_TEST=true
-  - make all
+  - make
   - ./littleworld

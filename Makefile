@@ -20,12 +20,6 @@ else
 	OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 endif
 
-dbg: 
-	@echo "$(SRC)"
-	@echo "$(OBJ)"
-	@echo "$(LIB_SRC)"
-	@echo "$(LIB_OBJ)"
-
 all: build $(APP_DIR)/$(TARGET)
 
 ifeq ($(BUILD_TEST),true)
