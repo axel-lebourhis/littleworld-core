@@ -2,6 +2,8 @@ os: linux
 language: cpp
 compiler:
   - gcc
+env:
+  - DISPLAY=:99.0
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y libsfml-dev
