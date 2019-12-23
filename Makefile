@@ -1,5 +1,5 @@
-CXX      := -g++
-CXXFLAGS := -Wall -O2 -std=c++14
+CXX      := g++
+CXXFLAGS := -Werror -Wall -O2 -std=c++14
 LDFLAGS  := -lsfml-graphics -lsfml-window -lsfml-system
 BUILD    := ./build
 SRC_DIR  := ./src
