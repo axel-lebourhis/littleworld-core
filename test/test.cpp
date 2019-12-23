@@ -13,8 +13,7 @@ int main(int argc, char *argv[])
 	View window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "LW Unit Test App");
 	Model model;
 	Controller controller(&window, &model);
-
 	model.addObserver(&window);
-	window.setFramerateLimit(60);
+
 	return 0;
 }
