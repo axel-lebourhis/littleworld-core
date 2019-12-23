@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
 	model.addObserver(&window);
 	//model.loadMap();
-	window.setVerticalSyncEnabled(true);
+	window.setFramerateLimit(60);
     while (window.isOpen())
     {
     	controller.handleInputs();
