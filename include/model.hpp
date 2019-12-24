@@ -40,6 +40,10 @@ public:
 	void setCameraOnPlayer();
 	void changeLevel();
 	bool isCollision(int);
+#ifdef TEST
+	bool runUnitTest();
+#endif
+
 };
 
 

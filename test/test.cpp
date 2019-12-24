@@ -15,5 +15,20 @@ int main(int argc, char *argv[])
 	Controller controller(&window, &model);
 	model.addObserver(&window);
 
+	/* model unit test */
+	std::cout << "START MODEL UNIT TEST" << std::endl;
+	model.runUnitTest();
+	std::cout << "MODEL UNIT TEST PASSED" << std::endl;
+
+	/* controller unit test */
+	std::cout << "START CONTROLLER UNIT TEST" << std::endl;
+	controller.runUnitTest();
+	std::cout << "CONTROLLER UNIT TEST PASSED" << std::endl;
+
+	/* view unit test */
+	std::cout << "START VIEW UNIT TEST" << std::endl;
+	window.runUnitTest();
+	std::cout << "VIEW UNIT TEST PASSED" << std::endl;
+
 	return 0;
 }

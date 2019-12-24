@@ -4,6 +4,9 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#ifdef TEST
+#include <assert.h>
+#endif
 #include "model.hpp"
 
 Model::Model() :
@@ -419,3 +422,22 @@ void Model::testScroll() {
 		}
 	}
 }
+
+#ifdef TEST
+bool Model::runUnitTest()
+{
+	this->setPlayerMoving(true);
+	assert(this->getPlayerMoving() == true);
+
+	this->setPlayerMoving(false);
+	assert(this->getPlayerMoving() == false);
+
+	this->setLevel(2);
+	assert(this->getLevel() == 2);
+
+	this->setLevel(1);
+	assert(this->getLevel() == 1);
+
+	return true;
+}
+#endif
