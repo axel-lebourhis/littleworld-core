@@ -14,6 +14,25 @@ To build the full project, just run:
 make all
 ```
 
+To force debug mode:
+
+```
+make debug
+```
+
+To force release mode:
+
+```
+make release
+```
+
+To build unit test app:
+
+```
+export BUILD_TEST=true
+make all
+```
+
 To clean your build directory, run:
 
 ```
