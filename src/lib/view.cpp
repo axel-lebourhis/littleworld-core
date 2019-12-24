@@ -5,6 +5,9 @@
 #include <fstream>
 #include <sstream>
 #include <SFML/Graphics.hpp>
+#ifdef TEST
+#include <assert.h>
+#endif
 #include "const.hpp"
 #include "view.hpp"
 
@@ -218,3 +221,10 @@ void View::drawMap(int layer) {
 		}
 	}
 }
+
+#ifdef TEST
+bool View::runUnitTest()
+{
+	return true;
+}
+#endif

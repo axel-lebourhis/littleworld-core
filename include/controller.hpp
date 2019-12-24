@@ -13,4 +13,7 @@ class Controller {
 		Controller(View*, Model*);
 
 		void handleInputs();
+#ifdef TEST
+		bool runUnitTest();
+#endif
 };

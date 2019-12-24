@@ -15,6 +15,7 @@ LIB_OBJ     := $(LIB_SRC:$(LIB_DIR)/%.cpp=$(LIB_OBJ_DIR)/%.o)
 ifeq ($(BUILD_TEST),true)
 	SRC += $(wildcard  $(TEST_DIR)/*.cpp)
 	OBJ := $(SRC:$(TEST_DIR)/%.cpp=$(OBJ_DIR)/%.o)
+	CXXFLAGS += -DTEST
 else
 	SRC += $(wildcard  $(SRC_DIR)/*.cpp)
 	OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)

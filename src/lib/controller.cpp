@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
-
+#ifdef TEST
+#include <assert.h>
+#endif
 #include "controller.hpp"
 
 Controller::Controller(View* view, Model* model) :
@@ -13,3 +15,10 @@ input_()
 void Controller::handleInputs() {
 	input_.handleInputs(view_, model_);
 }
+
+#ifdef TEST
+bool Controller::runUnitTest()
+{
+	return true;
+}
+#endif

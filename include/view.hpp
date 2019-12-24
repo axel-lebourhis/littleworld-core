@@ -97,6 +97,10 @@ public:
 	void drawPlayer();
 
 	void resetHeroTileDisplayed();
+
+#ifdef TEST
+	bool runUnitTest();
+#endif
 };
 
 #endif
