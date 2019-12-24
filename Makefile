@@ -12,6 +12,7 @@ LIB_DIR     := $(SRC_DIR)/lib
 LIB_OBJ_DIR := $(BUILD)/obj/lib
 LIB_SRC     := $(wildcard $(LIB_DIR)/*.cpp)
 LIB_OBJ     := $(LIB_SRC:$(LIB_DIR)/%.cpp=$(LIB_OBJ_DIR)/%.o)
+
 ifeq ($(BUILD_TEST),true)
 	SRC += $(wildcard  $(TEST_DIR)/*.cpp)
 	OBJ := $(SRC:$(TEST_DIR)/%.cpp=$(OBJ_DIR)/%.o)
@@ -20,6 +21,14 @@ else
 	SRC += $(wildcard  $(SRC_DIR)/*.cpp)
 	OBJ := $(SRC:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 endif
+
+release: CXXFLAGS += -O2
+release: MSG="Building in release mode"
+release: printstr-MSG all
+
+debug: CXXFLAGS += -DDEBUG -g
+debug: MSG="Building in debug mode"
+debug: printstr-MSG all
 
 all: build $(APP_DIR)/$(TARGET)
 
@@ -42,21 +51,15 @@ $(APP_DIR)/$(TARGET): $(LIB_OBJ) $(OBJ)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) $(OBJ) $(LIB_OBJ) -o $(APP_DIR)/$(TARGET) $(LDFLAGS)
 	@ln -sf $(APP_DIR)/$(TARGET) ./$(TARGET)
 
-.PHONY: all build clean debug release test
+.PHONY: all build clean debug release
 
-print-%  : ; @echo $* = $($*)
+printvar-%  : ; @echo "$* = $($*)"
+printstr-%  : ; @echo "$($*)"
 
 build:
 	@mkdir -p $(APP_DIR)
 	@mkdir -p $(OBJ_DIR)
 
-debug: CXXFLAGS += -DDEBUG -g
-debug: all
-
-release: CXXFLAGS += -O2
-release: all
-
 clean:
-	-@rm -rvf $(OBJ_DIR)/*
-	-@rm -rvf $(APP_DIR)/*
+	-@rm -rvf $(OBJ_DIR)
 	-@rm -vf ./$(TARGET)
