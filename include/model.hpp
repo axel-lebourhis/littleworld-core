@@ -24,9 +24,10 @@ public:
 	void setLevel(int);
 
 	bool getPlayerMoving() const;;
-	int getLevel() const;
+	int  getLevel() const;
 
 	void loadMap(std::string);
+	void registerMonster(int posX, int posY, int tileId);
 	void testScroll();
 	void updateView();
 	void moveDown(int);
@@ -39,6 +40,7 @@ public:
 	void moveCameraRight(int);
 	void setCameraOnPlayer();
 	void changeLevel();
+	void updateMonsterScreenPos();
 	bool isCollision(int);
 #ifdef TEST
 	bool runUnitTest();

@@ -58,6 +58,27 @@ sf::RenderWindow(mode, title)
 		hero.setTexture(heroTexture);
 	}
 
+	if(!monster1Texture.loadFromFile("graphics/monster1.png")){
+		std::cout << "Error loading Monster1 texture." << std::endl;
+	}
+	else {
+		monster1.setTexture(monster1Texture);
+	}
+
+	if(!monster2Texture.loadFromFile("graphics/monster2.png")){
+		std::cout << "Error loading Monster2 texture." << std::endl;
+	}
+	else {
+		monster2.setTexture(monster2Texture);
+	}
+
+	if(!monster3Texture.loadFromFile("graphics/monster3.png")){
+		std::cout << "Error loading Monster3 texture." << std::endl;
+	}
+	else {
+		monster3.setTexture(monster3Texture);
+	}
+
 	tilesetDisplayed_ = 1;
 	tileSetTimer_ = TIME_BETWEEN_FRAME * 3;
 	testScroll_ = 0;
@@ -70,6 +91,7 @@ void View::update(stateInfo updated_info) {
     clear();
     drawMap(2);
     drawMap(1);
+    drawMonsters();
     drawPlayer();
     drawMap(3);
 }
@@ -128,6 +150,29 @@ void View::drawPlayer() {
 		heroTileTimer_--;
 	}
 	draw(hero);
+}
+
+void View::drawMonsters() {
+	sf::Sprite monster;
+	monster_t type;
+
+	for(int i = 0; i < info.nbMonsters; i++) {
+		type = info.monsters[i].getType();
+		switch(type) {
+			case MONSTER1:
+				monster = monster1;
+				break;
+			case MONSTER2:
+				monster = monster2;
+				break;
+			case MONSTER3:
+				monster = monster3;
+				break;
+		}
+		monster.setPosition(sf::Vector2f(info.monsters[i].getScreenPosX(),info.monsters[i].getScreenPosY()));
+		monster.setTextureRect(sf::IntRect(0, 0, MONSTER_TILE_SIZE, MONSTER_TILE_SIZE));
+		draw(monster);
+	}
 }
 
 void View::drawMap(int layer) {
