@@ -8,6 +8,7 @@
 #include <assert.h>
 #endif
 #include "model.hpp"
+#include "const.hpp"
 
 Model::Model() :
 info()
@@ -170,11 +171,19 @@ void Model::loadMap(std::string filename) {
 		}
 	}
 
+	info.nbMonsters = 0;
 	for(int y = 0; y < MAX_TILES_XY; y++) {
 		for(int x = 0; x < MAX_TILES_XY; x++) {
 			info.layer4[y][x] = lines[y+MAX_TILES_XY*3][x];
+			if( (info.layer4[y][x] == MONSTER1_TILE_ID) ||\
+				(info.layer4[y][x] == MONSTER2_TILE_ID) ||\
+				(info.layer4[y][x] == MONSTER3_TILE_ID) ) {
+
+				registerMonster(x, y, info.layer4[y][x]);
+			}
 		}
 	}
+	updateMonsterScreenPos();
 
 	int y = MAX_TILES_XY * 4;
 
@@ -184,28 +193,63 @@ void Model::loadMap(std::string filename) {
 	mapRight = lines[y][3];
 }
 
+void Model::registerMonster(int posX, int posY, int tileId) {
+	switch(tileId) {
+		case MONSTER1_TILE_ID:
+			info.monsters[info.nbMonsters].setType(MONSTER1);
+			break;
+		case MONSTER2_TILE_ID:
+			info.monsters[info.nbMonsters].setType(MONSTER2);
+			break;
+		case MONSTER3_TILE_ID:
+			info.monsters[info.nbMonsters].setType(MONSTER3);
+			break;
+	}
+	info.monsters[info.nbMonsters].setMapPosX(posX);
+	info.monsters[info.nbMonsters].setMapPosY(posY);
+	info.nbMonsters++;
+}
+
+void Model::updateMonsterScreenPos() {
+	std::cout << "Update monster screen pos" << std::endl;
+	std::cout << "map start x " << info.map_start_p_x << std::endl;
+	std::cout << "map start y " << info.map_start_p_y << std::endl;
+	for(int i = 0; i < info.nbMonsters; i++) {
+		int screenPosX = info.monsters[i].getMapPosX()*TILE_SIZE - info.map_start_p_x;
+		int screenPosY = info.monsters[i].getMapPosY()*TILE_SIZE - info.map_start_p_y;
+		std::cout << "screen pos X " << screenPosX << std::endl;
+		std::cout << "screen pos Y " << screenPosY << std::endl;
+		info.monsters[i].setScreenPosX(screenPosX);
+		info.monsters[i].setScreenPosY(screenPosY);
+	}
+}
+
 void Model::moveCameraDown(int offset) {
 	if(info.map_start_p_y < info.map_max_p_y - WINDOW_HEIGHT) {
 		info.map_start_p_y += offset;
 	}
+	updateMonsterScreenPos();
 }
 
 void Model::moveCameraUp(int offset) {
 	if(info.map_start_p_y > 0) {
 		info.map_start_p_y -= offset;
 	}
+	updateMonsterScreenPos();
 }
 
 void Model::moveCameraLeft(int offset) {
 	if(info.map_start_p_x > 0) {
 		info.map_start_p_x -= offset;
 	}
+	updateMonsterScreenPos();
 }
 
 void Model::moveCameraRight(int offset) {
 	if(info.map_start_p_x < info.map_max_p_x - WINDOW_WIDTH) {
 		info.map_start_p_x += offset;
 	}
+	updateMonsterScreenPos();
 }
 
 void Model::setCameraOnPlayer() {
@@ -254,7 +298,7 @@ bool Model::isCollision(int direction) {
 			player_tile_x1 = (info.player.getMapPosX() - 3) / TILE_SIZE;
 			player_tile_y1 = info.player.getMapPosY() / TILE_SIZE;
 			player_tile_y2 = (info.player.getMapPosY() + TILE_SIZE) / TILE_SIZE;
-			if(info.layer4[player_tile_y1][player_tile_x1] == 1 || info.layer4[player_tile_y2][player_tile_x1] == 1) {
+			if(info.layer4[player_tile_y1][player_tile_x1] == COLLISION_TILE_ID || info.layer4[player_tile_y2][player_tile_x1] == COLLISION_TILE_ID) {
 				return true;
 			}
 			break;
@@ -262,7 +306,7 @@ bool Model::isCollision(int direction) {
 			player_tile_x2 = (info.player.getMapPosX() + HERO_TILE_SIZE_X + 3) / TILE_SIZE;
 			player_tile_y1 = info.player.getMapPosY() / TILE_SIZE;
 			player_tile_y2 = (info.player.getMapPosY() + TILE_SIZE) / TILE_SIZE;
-			if(info.layer4[player_tile_y1][player_tile_x2] == 1 || info.layer4[player_tile_y2][player_tile_x2] == 1) {
+			if(info.layer4[player_tile_y1][player_tile_x2] == COLLISION_TILE_ID || info.layer4[player_tile_y2][player_tile_x2] == COLLISION_TILE_ID) {
 				return true;
 			}
 			break;
@@ -270,7 +314,7 @@ bool Model::isCollision(int direction) {
 			player_tile_x1 = info.player.getMapPosX() / TILE_SIZE;
 			player_tile_x2 = (info.player.getMapPosX() + TILE_SIZE) / TILE_SIZE;
 			player_tile_y1 = (info.player.getMapPosY() - 3 ) / TILE_SIZE;
-			if(info.layer4[player_tile_y1][player_tile_x1] == 1 || info.layer4[player_tile_y1][player_tile_x2] == 1) {
+			if(info.layer4[player_tile_y1][player_tile_x1] == COLLISION_TILE_ID || info.layer4[player_tile_y1][player_tile_x2] == COLLISION_TILE_ID) {
 				return true;
 			}
 			break;
@@ -278,7 +322,7 @@ bool Model::isCollision(int direction) {
 			player_tile_x1 = info.player.getMapPosX() / TILE_SIZE;
 			player_tile_x2 = (info.player.getMapPosX() + TILE_SIZE) / TILE_SIZE;
 			player_tile_y2 = (info.player.getMapPosY() + HERO_TILE_SIZE_Y + 3) / TILE_SIZE;
-			if(info.layer4[player_tile_y2][player_tile_x1] == 1 || info.layer4[player_tile_y2][player_tile_x2] == 1) {
+			if(info.layer4[player_tile_y2][player_tile_x1] == COLLISION_TILE_ID || info.layer4[player_tile_y2][player_tile_x2] == COLLISION_TILE_ID) {
 				return true;
 			}
 			break;
